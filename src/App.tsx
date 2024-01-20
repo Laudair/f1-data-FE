@@ -1,15 +1,46 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import React, { useState } from 'react'
+import F1TelemetryChart, { TelemetryData } from './components/TelemtryChart'
+import { fetchF1TelemetryData } from './requests/fetchTelemetry'
 import './App.css'
 
+
 function App() {
-  const [count, setCount] = useState(0)
+  const [telemetry, setTelemetry] = useState<TelemetryData | null>(null)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | undefined>()
+
+
+
+  const fetchData = async () => {
+    setLoading(true)
+    setError(undefined)
+    try {
+      const data = await fetchF1TelemetryData('2022', 'Silverstone', 'VER')
+      setTelemetry(data)
+    }
+    catch (error) {
+      setError('error fetching')
+      console.log('error ', error)
+    }
+
+    setLoading(false)
+  }
+
 
   return (
     <>
-         <div>
-        <span>F1 data app</span>
+      <div style={{ height: '500px', width: '500px' }}>
+        
+        <button onClick={() => fetchData()}>Fetch data</button>
+        {telemetry ? (
+          <F1TelemetryChart telemetryData={telemetry} />
+        ) : error ? (
+          <span>{error}</span>
+        ) : loading ? (
+          <span>{loading}</span>
+        ) : (
+          <p>No data</p>
+        )}
       </div>
     </>
   )
