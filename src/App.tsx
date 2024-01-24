@@ -1,12 +1,10 @@
 import React, { useState } from 'react'
 import F1TelemetryChart, { TelemetryData } from './components/TelemtryChart'
 import { fetchF1TelemetryData } from './requests/fetchTelemetry'
-import './App.css'
-import { Select } from '@chakra-ui/react'
-
-
+import { Button, Select, Box, Text, useColorMode } from '@chakra-ui/react'
 
 function App() {
+  const { colorMode, toggleColorMode } = useColorMode()
   const [telemetry, setTelemetry] = useState<TelemetryData | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | undefined>()
@@ -15,8 +13,6 @@ function App() {
   const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedDriver(event.target.value);
   };
-
-
 
   const fetchData = async () => {
     setLoading(true)
@@ -62,9 +58,14 @@ function App() {
     { fullName: "Kevin Magnussen", shortName: "MAG", driverNumber: "20" }
   ];
 
+
+
   return (
-    <>
-      <div style={{ height: '500px', width: '500px' }}>
+    <Box style={{ height: '100vh', width: '100vw', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <Box style={{ height: '500px', width: '500px', padding: '12px' }}>
+        <Button onClick={toggleColorMode}>
+          Toggle {colorMode === 'light' ? 'Dark' : 'Light'}
+        </Button>
         <Select placeholder="Select driver" onChange={handleChange}>
           {drivers.map(driver => (
             <option key={driver.shortName} value={driver.shortName}>
@@ -74,7 +75,7 @@ function App() {
         </Select>
 
 
-        <button onClick={() => fetchData()}>Fetch data</button>
+        <Button onClick={() => fetchData()}>Fetch data</Button>
         {telemetry ? (
           <F1TelemetryChart telemetryData={telemetry} />
         ) : error ? (
@@ -82,10 +83,10 @@ function App() {
         ) : loading ? (
           <span>{loading}</span>
         ) : (
-          <p>No data</p>
+          <Text color="GrayText">No data</Text>
         )}
-      </div>
-    </>
+      </Box>
+    </Box>
   )
 }
 
