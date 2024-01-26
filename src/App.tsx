@@ -10,18 +10,29 @@ function App() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | undefined>()
   const [selectedDriver, setSelectedDriver] = useState('HAM')
+  const [selectedYear, setSelectedYear] = useState('2022');
+  const [selectedRace, setSelectedRace] = useState('SILVERSTONE');
 
-  const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setSelectedDriver(event.target.value)
-  }
+  const handleDriverChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedDriver(event.target.value);
+  };
+
+  const handleYearChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedYear(event.target.value);
+  };
+
+  const handleRaceChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedRace(event.target.value);
+  };
 
   const fetchData = async () => {
+    console.log('start fetching')
     setLoading(true)
     setError(undefined)
     try {
       const data = await fetchF1TelemetryData(
-        '2022',
-        'Silverstone',
+        selectedYear,
+        selectedRace,
         selectedDriver ?? 'HAM'
       )
       setTelemetry(data)
@@ -30,6 +41,7 @@ function App() {
       console.log('error ', error)
     }
 
+    console.log('end fetching')
     setLoading(false)
   }
 
@@ -62,44 +74,60 @@ function App() {
     { fullName: 'Kevin Magnussen', shortName: 'MAG', driverNumber: '20' }
   ]
 
+  const years = ['2022', '2021', '2020'];
+  const races = ['SILVERSTONE', 'MONZA', 'SPA'];
+
   return (
-    <>
+    <Box style={{ width: "100vw"}}>
       <TopBar key={null} type={''} props={'div'} />
 
       <Box
         style={{
           height: '100vh',
-          width: '100vw',
+          width: 'fit-content',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center'
         }}
       >
-        <Box style={{ height: '500px', width: '500px', padding: '12px' }}>
+        <Box style={{ height: '500px', width: '800px', padding: '12px' }}>
           <Button onClick={toggleColorMode}>
             Toggle {colorMode === 'light' ? 'Dark' : 'Light'}
           </Button>
-          <Select placeholder="Select driver" onChange={handleChange}>
+          <Select placeholder="Select year" onChange={handleYearChange} style={{ marginTop: '12px' }}>
+            {years.map((year) => (
+              <option key={year} value={year}>
+                {year}
+              </option>
+            ))}
+          </Select>
+          <Select placeholder="Select race" onChange={handleRaceChange} style={{ marginTop: '12px' }}>
+            {races.map((race) => (
+              <option key={race} value={race}>
+                {race}
+              </option>
+            ))}
+          </Select>
+          <Select placeholder="Select driver" onChange={handleDriverChange} style={{ marginTop: '12px' }}>
             {drivers.map((driver) => (
               <option key={driver.shortName} value={driver.shortName}>
                 {driver.fullName}
               </option>
             ))}
           </Select>
-
           <Button onClick={() => fetchData()}>Fetch data</Button>
-          {telemetry ? (
-            <F1TelemetryChart telemetryData={telemetry} />
+          {loading ? (
+            <span>Loading...</span>
           ) : error ? (
             <span>{error}</span>
-          ) : loading ? (
-            <span>{loading}</span>
-          ) : (
+          ) :  telemetry ? (
+            <F1TelemetryChart telemetryData={telemetry} />
+          )  : (
             <Text color="GrayText">No data</Text>
           )}
         </Box>
       </Box>
-    </>
+    </Box>
   )
 }
 
