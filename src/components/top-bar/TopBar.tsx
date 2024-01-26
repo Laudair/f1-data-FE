@@ -1,14 +1,16 @@
 import React from 'react'
-import { Box, Flex, Button, Image } from '@chakra-ui/react'
+import { Box, Flex, Button, Image, useColorMode, IconButton } from '@chakra-ui/react'
 
 // Replace this with the path to your Formula 1 logo image
 import Formula1Logo from '../../assets/react.svg'
+import { MoonIcon, SunIcon } from '@chakra-ui/icons'
 
 interface TopBarProps extends React.ReactElement<'div'> {
   children?: React.ReactNode
 }
 
 const TopBar: React.FC<TopBarProps> = ({ children, ...otherProps }) => {
+  const { colorMode, toggleColorMode } = useColorMode()
   return (
     <Box
       w="100%"
@@ -35,6 +37,8 @@ const TopBar: React.FC<TopBarProps> = ({ children, ...otherProps }) => {
         <Box flex={1} textAlign="center">
           {children}
         </Box>
+        <IconButton aria-label='Search database' onClick={toggleColorMode} icon={colorMode === 'light' ? <MoonIcon /> : <SunIcon />} style={{ marginRight: '18px' }}/>
+
         <Button colorScheme="blue">Login</Button>
       </Flex>
     </Box>
@@ -42,3 +46,4 @@ const TopBar: React.FC<TopBarProps> = ({ children, ...otherProps }) => {
 }
 
 export default TopBar
+git 

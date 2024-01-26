@@ -1,11 +1,11 @@
 import React, { useState } from 'react'
 import F1TelemetryChart, { TelemetryData } from './components/TelemtryChart'
 import { fetchF1TelemetryData } from './requests/fetchTelemetry'
-import { Button, Select, Box, Text, useColorMode } from '@chakra-ui/react'
+import { Button, Select, Box, Text } from '@chakra-ui/react'
 import TopBar from './components/top-bar/TopBar'
 
 function App() {
-  const { colorMode, toggleColorMode } = useColorMode()
+
   const [telemetry, setTelemetry] = useState<TelemetryData | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | undefined>()
@@ -91,9 +91,7 @@ function App() {
         }}
       >
         <Box style={{ height: '500px', width: '800px', padding: '12px' }}>
-          <Button onClick={toggleColorMode}>
-            Toggle {colorMode === 'light' ? 'Dark' : 'Light'}
-          </Button>
+    
           <Select placeholder="Select year" onChange={handleYearChange} style={{ marginTop: '12px' }}>
             {years.map((year) => (
               <option key={year} value={year}>
